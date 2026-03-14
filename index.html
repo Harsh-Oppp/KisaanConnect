@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KisanConnect — Smart Agriculture Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="header-logo">
+    <div class="logo-icon">🌿</div>
+    <div class="logo-text">
+      <h1>KisanConnect</h1>
+      <span>Smart Agriculture Portal</span>
+    </div>
+  </div>
+  <div class="header-badges">
+    <span class="badge live"><span class="live-dot"></span> IoT Live</span>
+  </div>
+</header>
+
+<main>
+  <div class="sensor-header">
+    <div>
+      <h2 class="section-title">Field Sensor Dashboard</h2>
+      <p class="section-sub">Live readings from your ESP32 soil monitoring unit</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="openModal()">⚙ Configure ESP32</button>
+      <button class="btn btn-primary" onclick="toggleFetch()" id="fetchBtn">▶ Start Live Feed</button>
+    </div>
+  </div>
+
+  <div class="conn-status disconnected" id="connStatus">
+    <span>●</span> <span id="connText">Not connected — enter your ESP32 IP and start the live feed</span>
+  </div>
+
+  <div class="sensor-grid">
+    <div class="sensor-card" id="card-npk">
+      <div class="card-accent npk"></div>
+      <div class="sensor-icon npk">🌱</div>
+      <div class="sensor-label">NPK — Soil Nutrients</div>
+      <div class="sensor-value" id="npk-total">—</div>
+      <div class="npk-breakdown">
+        <div class="npk-item"><div class="npk-item-label">N</div><div class="npk-item-val" id="npk-n">—</div></div>
+        <div class="npk-item"><div class="npk-item-label">P</div><div class="npk-item-val" id="npk-p">—</div></div>
+        <div class="npk-item"><div class="npk-item-label">K</div><div class="npk-item-val" id="npk-k">—</div></div>
+      </div>
+      <span class="sensor-status status-good" id="npk-status">Awaiting data</span>
+      <div class="last-updated" id="npk-time">🕐 --</div>
+    </div>
+
+    <div class="sensor-card" id="card-ph">
+      <div class="card-accent ph"></div>
+      <div class="sensor-icon ph">🧪</div>
+      <div class="sensor-label">Soil pH Level</div>
+      <div class="sensor-value" id="ph-val">—</div>
+      <div class="gauge-bar"><div class="gauge-fill" id="ph-gauge" style="width:0%;"></div></div>
+      <span class="sensor-status status-good" id="ph-status">Awaiting data</span>
+      <div class="last-updated" id="ph-time">🕐 --</div>
+    </div>
+
+    <div class="sensor-card" id="card-moist">
+      <div class="card-accent moist"></div>
+      <div class="sensor-icon moist">💧</div>
+      <div class="sensor-label">Soil Moisture</div>
+      <div class="sensor-value" id="moist-val">—<span class="sensor-unit">%</span></div>
+      <div class="gauge-bar"><div class="gauge-fill" id="moist-gauge" style="width:0%;"></div></div>
+      <span class="sensor-status status-good" id="moist-status">Awaiting data</span>
+      <div class="last-updated" id="moist-time">🕐 --</div>
+    </div>
+
+    <div class="sensor-card" id="card-temp">
+      <div class="card-accent temp"></div>
+      <div class="sensor-icon temp">🌡️</div>
+      <div class="sensor-label">Soil Temperature</div>
+      <div class="sensor-value" id="temp-val">—<span class="sensor-unit">°C</span></div>
+      <div class="gauge-bar"><div class="gauge-fill" id="temp-gauge" style="width:0%;"></div></div>
+      <span class="sensor-status status-good" id="temp-status">Awaiting data</span>
+      <div class="last-updated" id="temp-time">🕐 --</div>
+    </div>
+  </div>
+
+  <div class="advisory">
+    <div class="advisory-icon">📡</div>
+    <div>
+      <h3>ESP32 Integration Guide</h3>
+      <p>Your ESP32 should serve JSON at <strong>/data</strong>. Expected format:<br><code>{"n":140,"p":45,"k":120,"ph":6.5,"moisture":65,"temperature":28}</code><br>Click <strong>Configure ESP32</strong> to set IP and view sample code.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="helpline-strip">
+    <span>🌾 Farmer Helpline Numbers</span>
+    <div class="helpline-numbers">
+      <span class="helpline-num">Kisan Call Centre: 1800-180-1551</span>
+      <span class="helpline-num">PM-KISAN Support: 155261</span>
+      <span class="helpline-num">Soil Health Card: 1800-11-8989</span>
+    </div>
+  </div>
+
+  <h2 class="section-title">Agricultural Services & Portals</h2>
+  <p class="section-sub">Important schemes and digital platforms for farmers</p>
+
+  <div class="services-grid">
+    <div class="service-card">
+      <span class="service-emoji">🌾</span>
+      <div class="service-tag">Direct Benefit</div>
+      <div class="service-name">PM-KISAN Samman Nidhi</div>
+      <div class="service-desc">₹6,000 per year direct income support given in three equal installments.</div>
+      <a href="https://pmkisan.gov.in" target="_blank" class="service-link">Check Status / Register →</a>
+    </div>
+
+    <div class="service-card">
+      <span class="service-emoji">🛡️</span>
+      <div class="service-tag">Crop Insurance</div>
+      <div class="service-name">Pradhan Mantri Fasal Bima Yojana</div>
+      <div class="service-desc">Insurance cover for crop loss due to natural calamities, pests and diseases.</div>
+      <a href="https://pmfby.gov.in" target="_blank" class="service-link">Enroll & Claim →</a>
+    </div>
+
+    <div class="service-card">
+      <span class="service-emoji">🧪</span>
+      <div class="service-tag">Soil Testing</div>
+      <div class="service-name">Soil Health Card Scheme</div>
+      <div class="service-desc">Free soil testing and crop-specific fertilizer recommendations.</div>
+      <a href="https://soilhealth.dac.gov.in" target="_blank" class="service-link">Get Your Card →</a>
+    </div>
+
+    <div class="service-card">
+      <span class="service-emoji">🏦</span>
+      <div class="service-tag">Credit & Loans</div>
+      <div class="service-name">Kisan Credit Card (KCC)</div>
+      <div class="service-desc">Flexible short-term credit up to ₹3 lakh at subsidized interest rate.</div>
+      <a href="https://www.nabard.org/kisan-credit-card.aspx" target="_blank" class="service-link">Apply / Details →</a>
+    </div>
+
+    <div class="service-card">
+      <span class="service-emoji">📱</span>
+      <div class="service-tag">Digital Marketplace</div>
+      <div class="service-name">eNAM — National Agriculture Market</div>
+      <div class="service-desc">Online trading platform connecting farmers to buyers nationwide.</div>
+      <a href="https://enam.gov.in" target="_blank" class="service-link">Start Trading →</a>
+    </div>
+
+    <div class="service-card">
+      <span class="service-emoji">💧</span>
+      <div class="service-tag">Irrigation</div>
+      <div class="service-name">PM Krishi Sinchayee Yojana</div>
+      <div class="service-desc">Focus on "More crop per drop" — support for micro-irrigation systems.</div>
+      <a href="https://pmksy.gov.in" target="_blank" class="service-link">Apply for Subsidy →</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <strong>KisanConnect</strong> · Smart Agriculture Information & IoT Portal<br>
+  <small>Sensor data is fetched from your local ESP32 device only. Always verify scheme details on official websites.</small>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2>⚙ Configure ESP32</h2>
+    <p>Enter the local IP address of your ESP32. It must serve JSON at the <code>/data</code> endpoint.</p>
+
+    <div class="form-group">
+      <label>ESP32 IP Address</label>
+      <input type="text" id="espIP" placeholder="e.g. 192.168.1.45" value="">
+    </div>
+    <div class="form-group">
+      <label>Port</label>
+      <input type="text" id="espPort" placeholder="80" value="80">
+    </div>
+    <div class="form-group">
+      <label>Endpoint Path</label>
+      <input type="text" id="espPath" placeholder="/data" value="/data">
+    </div>
+    <div class="form-group">
+      <label>Poll Interval</label>
+      <select id="pollInterval">
+        <option value="2000">Every 2 seconds</option>
+        <option value="5000" selected>Every 5 seconds</option>
+        <option value="10000">Every 10 seconds</option>
+        <option value="30000">Every 30 seconds</option>
+      </select>
+    </div>
+
+    <details style="margin: 20px 0 12px;">
+      <summary style="cursor:pointer; color:var(--leaf); font-weight:600; font-size:0.95rem;">▸ Sample Arduino Code for ESP32</summary>
+      <div class="code-block">
+#include &lt;WiFi.h&gt;
+#include &lt;WebServer.h&gt;
+
+const char* ssid     = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+WebServer server(80);
+
+void handleData() {
+  // Replace these values with real sensor readings
+  float n = 140.0;
+  float p = 45.0;
+  float k = 120.0;
+  float ph = 6.5;
+  float moisture = 65.0;
+  float temperature = 28.0;
+
+  String json = "{";
+  json += "\"n\":" + String(n,1) + ",";
+  json += "\"p\":" + String(p,1) + ",";
+  json += "\"k\":" + String(k,1) + ",";
+  json += "\"ph\":" + String(ph,2) + ",";
+  json += "\"moisture\":" + String(moisture,1) + ",";
+  json += "\"temperature\":" + String(temperature,1);
+  json += "}";
+
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "application/json", json);
+}
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWiFi connected. IP: " + WiFi.localIP().toString());
+
+  server.on("/data", handleData);
+  server.begin();
+}
+
+void loop() {
+  server.handleClient();
+}
+      </div>
+    </details>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveConfig()">Save & Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
