@@ -6,34 +6,52 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post("/chat", async (req, res) => {
+app.get("/", (req, res) => {
+    res.send("AI Server Running");
+});
 
-    const message = req.body.message;
+app.post("/chat", async (req, res) => {
 
     try {
 
-        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer YOUR_GROQ_API_KEY"
-            },
-            body: JSON.stringify({
-                model: "llama3-8b-8192",
-                messages: [
-                    {
-                        role: "system",
-                        content: "You are an expert farming AI assistant."
-                    },
-                    {
-                        role: "user",
-                        content: message
-                    }
-                ]
-            })
-        });
+        const message = req.body.message;
+
+        const response = await fetch(
+            "https://api.groq.com/openai/v1/chat/completions",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer YOUR_GROQ_API_KEY"
+                },
+                body: JSON.stringify({
+                    model: "llama3-8b-8192",
+                    messages: [
+                        {
+                            role: "system",
+                            content:
+                            "You are an intelligent agricultural AI assistant helping farmers with crops, soil health, irrigation, fertilizers, pests, NPK, pH, and farming techniques."
+                        },
+                        {
+                            role: "user",
+                            content: message
+                        }
+                    ]
+                })
+            }
+        );
 
         const data = await response.json();
+
+        console.log(data);
+
+        if(data.error){
+
+            return res.json({
+                reply: "Groq API Error"
+            });
+
+        }
 
         res.json({
             reply: data.choices[0].message.content
@@ -41,14 +59,18 @@ app.post("/chat", async (req, res) => {
 
     } catch(err){
 
+        console.log(err);
+
         res.json({
-            reply: "AI server failed"
+            reply: "Backend Server Error"
         });
 
     }
 
 });
 
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
     console.log("Server running");
 });
