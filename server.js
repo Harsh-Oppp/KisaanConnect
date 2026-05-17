@@ -1,13 +1,16 @@
-const express = require("express");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
 
 const app = express();
 
 app.use(cors());
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.send("AI Server Running");
+
+    res.send("KisaanConnect AI Server Running");
+
 });
 
 app.post("/chat", async (req, res) => {
@@ -20,23 +23,34 @@ app.post("/chat", async (req, res) => {
             "https://api.groq.com/openai/v1/chat/completions",
             {
                 method: "POST",
+
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer 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"
+
+                    "Authorization":
+                        "Bearer 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"
                 },
+
                 body: JSON.stringify({
+
                     model: "llama3-8b-8192",
+
                     messages: [
                         {
                             role: "system",
+
                             content:
-                            "You are an intelligent agricultural AI assistant helping farmers with crops, soil health, irrigation, fertilizers, pests, NPK, pH, and farming techniques."
+                                "You are an expert agriculture AI assistant helping farmers with crops, fertilizers, irrigation, soil health, NPK analysis, and farming improvements."
                         },
+
                         {
                             role: "user",
+
                             content: message
                         }
-                    ]
+                    ],
+
+                    temperature: 0.7
                 })
             }
         );
@@ -45,32 +59,37 @@ app.post("/chat", async (req, res) => {
 
         console.log(data);
 
-        if(data.error){
+        if (data.error) {
 
             return res.json({
-                reply: "Groq API Error"
+                reply:
+                    "Groq API Error: " +
+                    data.error.message
             });
-
         }
 
-        res.json({
-            reply: data.choices[0].message.content
-        });
-
-    } catch(err){
-
-        console.log(err);
+        const reply =
+            data.choices[0].message.content;
 
         res.json({
-            reply: "Backend Server Error"
+            reply: reply
         });
 
+    } catch (error) {
+
+        console.log(error);
+
+        res.json({
+            reply: "Server Error"
+        });
     }
-
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT =
+    process.env.PORT || 10000;
 
 app.listen(PORT, () => {
+
     console.log("Server running");
+
 });
