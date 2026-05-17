@@ -22,7 +22,7 @@ app.post("/chat", async (req, res) => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer YOUR_GROQ_API_KEY"
+                    "Authorization": "Bearer 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"
                 },
                 body: JSON.stringify({
                     model: "llama3-8b-8192",
