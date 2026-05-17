@@ -28,7 +28,7 @@ app.post("/chat", async (req, res) => {
                     "Content-Type": "application/json",
 
                     "Authorization":
-                        "Bearer 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"
+                        "Bearer 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"
                 },
 
                 body: JSON.stringify({
